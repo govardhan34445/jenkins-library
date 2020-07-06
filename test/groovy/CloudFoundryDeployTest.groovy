@@ -90,8 +90,8 @@ class CloudFoundryDeployTest extends BasePiperTest {
     void testNoTool() throws Exception {
         nullScript.commonPipelineEnvironment.configuration = [
             general: [
-                //buildTool: 'mta',
-                cfCredentialsId: 'myCreds',],
+                buildTool: 'mta',
+                cfCredentialsId: 'test_cfCredentialsId',],
             stages: [
                 acceptance: [
                     //cfAppName: 'testAppName',
