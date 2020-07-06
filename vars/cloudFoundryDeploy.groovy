@@ -11,6 +11,11 @@ import static com.sap.piper.Prerequisites.checkScript
 @Field String STEP_NAME = getClass().getName()
 
 @Field Set GENERAL_CONFIG_KEYS = [
+    /**
+     * Defines the tool used for the build.
+     * @possibleValues `docker`, `kaniko`, `maven`, `mta`, `npm`
+     */
+    'buildTool',
     'cloudFoundry',
         /**
          * Cloud Foundry API endpoint.
@@ -204,14 +209,16 @@ void call(Map parameters = [:]) {
             .mixinStepConfig(script.commonPipelineEnvironment, STEP_CONFIG_KEYS, CONFIG_KEY_COMPATIBILITY)
             .mixinStageConfig(script.commonPipelineEnvironment, parameters.stageName?:env.STAGE_NAME, STEP_CONFIG_KEYS, CONFIG_KEY_COMPATIBILITY)
             .mixin(parameters, PARAMETER_KEYS, CONFIG_KEY_COMPATIBILITY)
-            .addIfEmpty('deployTool', script.commonPipelineEnvironment.getBuildTool()=='mta' ? 'mtaDeployPlugin' : 'cf_native')
+            .addIfEmpty('buildTool', script.commonPipelineEnvironment.getBuildTool())
+            .dependingOn('buildTool').mixin('deployTool')
+            //.addIfEmpty('deployTool', script.commonPipelineEnvironment.getBuildTool()=='mta' ? 'mtaDeployPlugin' : 'cf_native')
             .dependingOn('deployTool').mixin('dockerImage')
             .dependingOn('deployTool').mixin('dockerWorkspace')
             .withMandatoryProperty('cloudFoundry/org')
             .withMandatoryProperty('cloudFoundry/space')
             .withMandatoryProperty('cloudFoundry/credentialsId')
             .use()
-
+        println("Thats the config ${config}")
         utils.pushToSWA([
             step: STEP_NAME,
             stepParamKey1: 'deployTool',

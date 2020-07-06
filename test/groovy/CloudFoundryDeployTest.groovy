@@ -90,12 +90,11 @@ class CloudFoundryDeployTest extends BasePiperTest {
     void testNoTool() throws Exception {
         nullScript.commonPipelineEnvironment.configuration = [
             general: [
-                camSystemRole: 'testRole',
-                cfCredentialsId: 'test_cfCredentialsId'
-            ],
+                //buildTool: 'mta',
+                cfCredentialsId: 'myCreds',],
             stages: [
                 acceptance: [
-                    cfAppName: 'testAppName',
+                    //cfAppName: 'testAppName',
                     cfOrg: 'testOrg',
                     cfSpace: 'testSpace',
                     deployUser: 'testUser',
@@ -105,12 +104,12 @@ class CloudFoundryDeployTest extends BasePiperTest {
                 cloudFoundryDeploy: []
             ]
         ]
-        nullScript.commonPipelineEnvironment.setBuildTool('mta')
+        //nullScript.commonPipelineEnvironment.setBuildTool('mta')
         stepRule.step.cloudFoundryDeploy([
             script: nullScript,
             juStabUtils: utils,
             jenkinsUtilsStub: new JenkinsUtilsMock(),
-            deployTool: '',
+            //deployTool: '',
             mtaPath: 'target/test.mtar',
             stageName: 'acceptance',
         ])
